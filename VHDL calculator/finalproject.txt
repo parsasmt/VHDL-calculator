@@ -1,0 +1,103 @@
+LIBRARY IEEE;
+USE IEEE.std_logic_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+ENTITY template IS
+	PORT (
+
+	------------ CLOCK ----------
+	clk 	: IN  std_logic;
+	KEY	: IN  std_logic_vector(1 DOWNTO 0);
+	SW 	: IN  std_logic_vector(3 DOWNTO 0);
+	LED	: OUT std_logic_vector(7 DOWNTO 0)
+
+);
+END template;
+ARCHITECTURE behavioral OF template IS
+SIGNAL stored_pass : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0111";
+signal input1 : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000";
+signal input2 : STD_LOGIC_VECTOR(3 DOWNTO 0) := "0000";
+signal result : STD_LOGIC_VECTOR(7 DOWNTO 0) := "00000000";
+signal op : STD_LOGIC_VECTOR(1 DOWNTO 0) := "00";
+BEGIN
+    tstramz : PROCESS (KEY)
+	begin
+		IF KEY="01" THEN
+		  IF stored_pass = SW THEN 
+		  LED(0) <= '1';
+		  LED(1) <= '1';
+		  LED(2) <= '1';
+		  LED(3) <= '1';
+		  LED(4) <= '1';
+		  LED(5) <= '1';
+		  LED(6) <= '1';
+		  LED(7) <= '1';
+		  else
+		  LED(0) <= '1';
+		  LED(1) <= '0';
+		  LED(2) <= '1';
+		  LED(3) <= '0';
+		  LED(4) <= '1';
+		  LED(5) <= '0';
+		  LED(6) <= '1';
+		  LED(7) <= '0';
+		  END IF;
+		  
+		  elsif KEY = "00" then
+			input1 <= SW;
+	-- end if;
+	elsif KEY = "01" and SW(3)='1' then
+			if SW(1) ='0' and SW(0)= '0' then op <= "00"; end if;
+			if SW(1) ='1' and SW(0)= '0' then op <= "01"; end if;
+			if SW(1) ='0' and SW(0)= '1' then op <= "10"; end if;
+			if SW(1) ='1' and SW(0)= '1' then op <= "11"; end if;
+	-- end if;
+	elsif KEY = "10" then
+			input2 <= SW;
+			if op = "00" then result <= std_logic_vector (unsigned("0000" & input1) + unsigned("0000" & input2)); end if ;
+		   if op = "10" then result <= std_logic_vector(unsigned("0000" & input1) - unsigned("0000" & input2)); end if ;
+		   if op = "01" then result <=  std_logic_vector(unsigned(input1) * unsigned(input2)); end if ;
+		  -- if op = "11" then result <= input1 / input2; end if ;
+		   LED(0) <= result(0);
+	LED(1) <= result(1);
+	LED(2) <= result(2);
+	LED(3) <= result(3);
+	LED(4) <= result(4);
+	LED(5) <= result(5);
+	LED(6) <= result(6);
+	LED(7) <= result(7);
+	-- end if;
+	-- 
+		END IF;
+	END PROCESS;
+	-- process (KEY , SW)
+    -- begin
+    --     if KEY = "00" then
+    --             input1 <= SW;
+    --     end if;
+    --     if KEY = "01" and SW(3)='1' then
+    --             if SW(1) ='0' and SW(0)= '0' then op <= "00"; end if;
+    --             if SW(1) ='1' and SW(0)= '0' then op <= "01"; end if;
+    --             if SW(1) ='0' and SW(0)= '1' then op <= "10"; end if;
+    --             if SW(1) ='1' and SW(0)= '1' then op <= "11"; end if;
+    --     end if;
+    --     if KEY = "10" then
+    --             input2 <= SW;
+    --     end if;
+    --     if KEY = "11" then
+    --            if op = "00" then result <= std_logic_vector (unsigned("0000" & input1) + unsigned("0000" & input2)); end if ;
+    --            if op = "10" then result <= std_logic_vector(unsigned("0000" & input1) - unsigned("0000" & input2)); end if ;
+    --            if op = "01" then result <=  std_logic_vector(unsigned(input1) * unsigned(input2)); end if ;
+    --            if op = "11" then result <= input1 / input2; end if ;
+    --     end if;
+    -- end process;
+
+	-- LED(0) <= result(0);
+	-- LED(1) <= result(1);
+	-- LED(2) <= result(2);
+	-- LED(3) <= result(3);
+	-- LED(4) <= result(4);
+	-- LED(5) <= result(5);
+	-- LED(6) <= result(6);
+	-- LED(7) <= result(7);	
+
+END behavioral;
